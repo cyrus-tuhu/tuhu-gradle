@@ -1,0 +1,16 @@
+buildscript {
+    ext {
+
+
+        springBootVersion = '2.1.3.RELEASE'
+        springCloudVersion = 'Greenwich.RELEASE'
+        //mainClass = 'cn.tuhu.kbs.EurekaServerApplication'
+    }
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
