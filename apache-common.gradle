@@ -1,0 +1,11 @@
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: "idea"
+    dependencies {
+        compile(
+                "org.apache.commons:commons-collections4:4.4",
+        )
+     }
+}
