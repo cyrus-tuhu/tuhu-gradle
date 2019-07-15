@@ -2,8 +2,10 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
+jar.enabled = true // 需要在build/libs下生成jar文件
+
 jar {
-    version = '1.0.0-SNAPSHOT'
+    version = '1.0.0'+(snapShot=true?'-SNAPSHOT':'.RELEASE')
 }
 
 task sourceJar(type: Jar) {
