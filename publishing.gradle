@@ -1,7 +1,5 @@
 
 apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot
 apply plugin: 'maven-publish'
 
 task sourceJar(type: Jar) {
@@ -30,8 +28,6 @@ publishing {
             url = NEXUS_SNAPSHOT_URL //"http://maven.tuhu.work:8081/nexus/content/repositories/snapshots/"//"http://jenkins.maxrocky.com:8080/maven/content/repositories/thirdparty/"
             //认证用户和密码
             credentials {
-                //username 'admin'
-                //password 'admin123'
                 username = NEXUS_USERNAME
                 password = NEXUS_PASSWORD
             }
