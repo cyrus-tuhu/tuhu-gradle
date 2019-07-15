@@ -2,6 +2,10 @@
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
+jar {
+    version = '1.0.0-SNAPSHOT'
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
