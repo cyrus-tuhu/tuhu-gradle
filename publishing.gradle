@@ -1,4 +1,9 @@
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot
 apply plugin: 'maven-publish'
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
 }
