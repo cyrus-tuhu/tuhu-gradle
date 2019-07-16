@@ -3,7 +3,8 @@ apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 jar {
-    version = '1.0.0'+(${SNAPHOT_POLICY}=true?'-SNAPSHOT':'.RELEASE')
+    def ver = SNAPHOT_POLICY=true?'-SNAPSHOT':'.RELEASE'
+    version = '1.0.0'+ver
 }
 
 task sourceJar(type: Jar) {
