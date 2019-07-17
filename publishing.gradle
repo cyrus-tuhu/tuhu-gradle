@@ -4,7 +4,7 @@ apply plugin: 'maven-publish'
 
 jar {
     
-    version = '1.0.0'+SNAPSHOT_POLICY=true?'-SNAPSHOT':'.RELEASE'
+    version = '1.0.0'+(SNAPSHOT_POLICY=true?'-SNAPSHOT':'.RELEASE')
 }
 
 task sourceJar(type: Jar) {
