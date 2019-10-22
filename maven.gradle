@@ -1,0 +1,106 @@
+task maven {
+    apply plugin: 'java'
+    apply plugin: 'maven' 
+    pom {
+        project {
+            groupId project.group
+            version version
+            
+            parent {
+                groupId 'org.springframework.boot'
+                artifactId 'spring-boot-starter-parent'
+                version springBootVersion
+            }
+            
+        }
+    }.withXml {
+
+        def mainClass = mainClass
+        def springBootVersion = springBootVersion
+        def packingNode = asNode().with {
+            appendNode('packaging', 'jar')
+        }
+
+        def map = dependencyManagement;
+        def list = [];
+
+        map.each {
+            def jarlib = "$it.value";
+            list.add(jarlib)
+        }
+
+        def dependencyManagementNode = asNode().with {
+            appendNode('dependencyManagement').with {
+
+
+                appendNode('dependencies').with {
+
+                    appendNode('dependency').with {
+                        appendNode('groupId', 'org.springframework.cloud')
+                        appendNode('artifactId', 'spring-cloud-dependencies')
+                        appendNode('version', 'Greenwich.SR2')
+                        appendNode('type', 'pom')
+                        appendNode('scope', 'import')
+                    }
+
+
+                    for (a in list) {
+                        def b = a.split(':')
+
+                        appendNode('dependency').with {
+                            appendNode('groupId', b[0])
+                            appendNode('artifactId', b[1])
+                            appendNode('version', b[2])
+                        }
+                    }
+
+                }
+            }
+        }
+
+        def propertiesNode = asNode().with{
+            appendNode('properties').with{
+                appendNode('project.build.sourceEncoding', 'UTF-8')
+                appendNode('project.reporting.outputEncoding','UTF-8')
+                appendNode('java.version', '1.8')
+            }
+        }
+        def repositoriesNode = asNode().with{
+            appendNode('repositories').
+                    appendNode('repository').with {
+                appendNode('id', 'nexus_public')
+                appendNode('url','http://maven.tuhu.work:8081/nexus/content/groups/public')
+            }
+        }
+
+        def projectName = project.name
+        def buildNode = asNode().with {
+            appendNode('build').with {
+                appendNode('finalName', projectName)
+                appendNode('plugins').with {
+                    appendNode('plugin').with {
+                        appendNode('groupId', 'org.springframework.boot')
+                        appendNode('artifactId', 'spring-boot-maven-plugin')
+                        appendNode('version', springBootVersion)
+                        appendNode('configuration').with {
+                            appendNode('mainClass', mainClass)
+                            appendNode('layout', 'ZIP')
+                        }
+                        appendNode('executions').
+                                appendNode('execution').
+                                appendNode('goals').
+                                appendNode('goal', 'repackage')
+                    }
+                    appendNode('plugin').with {
+                        appendNode('groupId', 'org.apache.maven.plugins')
+                        appendNode('artifactId', 'maven-surefire-plugin')
+                        appendNode('version', '2.18.1')
+                        appendNode('configuration').with {
+                            appendNode('skipTests', 'true')
+                        }
+                    }
+                }
+            }
+        }
+    }.writeTo("pom.xml")
+}
