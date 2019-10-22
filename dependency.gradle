@@ -1,32 +1,164 @@
 apply plugin: 'io.spring.dependency-management'
+allprojects {
+  repositories {
+    maven{ url 'http://maven.tuhu.work:8081/nexus/content/repositories/public/'}
+    maven{ url 'https://maven.aliyun.com/repository/central'}
+  }
+  ext{
+     dependencyManagement = [
+                 'mssqljdbc':'com.microsoft.sqlserver:mssql-jdbc:7.3.1.jre8-preview',
+                 'hutoolcore':'cn.hutool:hutool-core:4.6.1',
+                 'apolloclient':'com.ctrip.framework.apollo:apollo-client:1.4.0',
+                 'guava':'com.google.guava:guava:20.0',
+                 'fastjson':'com.alibaba:fastjson:1.2.58',
+                 'jacksondatatypejsr310':'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.9',
+                 'jacksondataformatyaml':'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9',
+                 'springfoxswagger2':'io.springfox:springfox-swagger2:2.9.2',
+                 'springfoxswaggerui':'io.springfox:springfox-swagger-ui:2.9.2',
+                 'aspectjtools':'org.aspectj:aspectjtools:1.9.4',
+                 'lombok':'org.projectlombok:lombok:1.18.8',
+                 'commonsbeanutils':'commons-beanutils:commons-beanutils:1.9.3',
+                 'commonslang':'commons-lang:commons-lang:2.6',
+                 'commonsfileupload':'commons-fileupload:commons-fileupload:1.3.1',
+                 'commonsio':'commons-io:commons-io:2.6',
+                 'commonscodec':'commons-codec:commons-codec:1.10',
+                 'commonsjexl':'org.apache.commons:commons-jexl:2.1.1',
+                 'commonslang3':'org.apache.commons:commons-lang3:3.7',
+                 'commonscollections4':'org.apache.commons:commons-collections4:4.4',
+                 'dom4j':'dom4j:dom4j:1.6.1',
+                 'gson':'com.google.code.gson:gson:2.8.5',
+                 'querydsljpa':'com.querydsl:querydsl-jpa:4.2.1',
+                 'querydslapt':'com.mysema.querydsl:querydsl-apt:3.7.4',
+                 'redisson':'org.redisson:redisson:3.11.1',
+                 'freemarker':'org.freemarker:freemarker:2.3.28',
+                 'alibabasentinel':'org.springframework.cloud:spring-cloud-starter-alibaba-sentinel:0.9.0.RELEASE',
+                 'alibabanacosdiscovery':'org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery:0.9.0.RELEASE',
+                 'tuhuspringframeworkcontext':'cn.tuhu:tuhu-springframework-context:1.0.0-R20190927-02',
+                 'tuhuspringframeworkcore':'cn.tuhu:tuhu-springframework-core:1.0.0',
+                 'tuhuspringframeworkweb':'cn.tuhu:tuhu-springframework-web:1.0.0',
+                 'tuhuspringframeworkjpa':'cn.tuhu:tuhu-springframework-jpa:1.0.0',
+                 'tuhuspringframeworkdatajpa':'cn.tuhu:tuhu-springframework-data-jpa:1.0.0-R20190916-01',
+                 'tuhuspringframeworkcache':'cn.tuhu:tuhu-springframework-cache:1.0.0-R20190903-01',
+                 'tuhuspringframeworkwebmvc':'cn.tuhu:tuhu-springframework-webmvc:1.0.0-R20190820-02',
+                 'tuhuspringframeworkxxljobstarter':'cn.tuhu:tuhu-springframework-xxl-job-starter:1.0.0-R20191007-01',
+                 'tuhuspringframeworkmybatis':'cn.tuhu:tuhu-springframework-mybatis:1.0.0-R20190927-01'
+         ]
+   }
 
-repositories {
-    maven{ url 'http://maven.aliyun.com/nexus/content/groups/snapshot/'}
-    maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-    jcenter()
+   project.configurations.all { configuration ->
+
+        if(name == "compile")
+        {
+            if(project.name.endsWith("-dao")) {
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-datasource:1.0.0-R20190921-04"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-web"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-jpa"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-mybatis"))
+            }
+            if(project.name.endsWith("-domain")) {
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-web"))
+                configuration.dependencies.add(project.dependencies.create("org.hibernate:hibernate-validator:6.0.17.Final"))
+            }
+            
+            if(project.name.endsWith("-facade")) {
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-webmvc"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-openfeign"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-hystrix"))
+                configuration.dependencies.add(project.dependencies.create("org.hibernate:hibernate-validator:6.0.17.Final"))
+            }
+            if(project.name.endsWith("-logic")) {
+                configuration.dependencies.add(project.dependencies.create("com.alicp.jetcache:jetcache-starter-redis:2.6.0.M3"))
+                configuration.dependencies.add(project.dependencies.create("cn.hutool:hutool-core"))
+            }
+            if(project.name.endsWith("-job")) {
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"))
+                configuration.dependencies.add(project.dependencies.create("com.alicp.jetcache:jetcache-starter-redis:2.6.0.M3"))
+                configuration.dependencies.add(project.dependencies.create("com.microsoft.sqlserver:mssql-jdbc"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-webmvc"))
+                configuration.dependencies.add(project.dependencies.create("com.ctrip.framework.apollo:apollo-client"))
+                configuration.dependencies.add(project.dependencies.create("com.github.danielwegener:logback-kafka-appender:0.2.0-RC2"))
+                //configuration.dependencies.add(project.dependencies.create("com.tuhu.finance:rabbitmq-logback-appender:1.0.2018101201"))
+                configuration.dependencies.add(project.dependencies.create("com.getsentry.raven:raven-logback:7.6.0"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.boot:spring-boot-starter-actuator"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-alibaba-sentinel"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-xxl-job-starter"))
+            }
+            if(project.name.endsWith("-provider")) {
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"))
+                configuration.dependencies.add(project.dependencies.create("com.microsoft.sqlserver:mssql-jdbc"))
+                configuration.dependencies.add(project.dependencies.create("org.codehaus.janino:janino:2.6.1"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-webmvc"))
+                configuration.dependencies.add(project.dependencies.create("com.ctrip.framework.apollo:apollo-client"))
+                configuration.dependencies.add(project.dependencies.create("com.github.danielwegener:logback-kafka-appender:0.2.0-RC2"))
+                //configuration.dependencies.add(project.dependencies.create("com.tuhu.finance:rabbitmq-logback-appender:1.0.2018101201"))
+                configuration.dependencies.add(project.dependencies.create("com.getsentry.raven:raven-logback:7.6.0"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.boot:spring-boot-starter-actuator"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-alibaba-sentinel"))
+                configuration.dependencies.add(project.dependencies.create("com.alibaba.csp:sentinel-datasource-apollo:1.6.3"))            
+                            
+            }
+            if(project.name.endsWith("-task")) {
+                configuration.dependencies.add(project.dependencies.create("com.tuhu.boot.oidc:tuhu-boot-starter-oidc:1.0.2018062601"){
+                    exclude module: 'spring-boot-starter-tomcat'
+                }
+                )
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client"))
+                configuration.dependencies.add(project.dependencies.create("com.microsoft.sqlserver:mssql-jdbc"))
+                configuration.dependencies.add(project.dependencies.create("com.ctrip.framework.apollo:apollo-client"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-webmvc"))
+                configuration.dependencies.add(project.dependencies.create("com.github.danielwegener:logback-kafka-appender:0.2.0-RC2"))
+                configuration.dependencies.add(project.dependencies.create("com.getsentry.raven:raven-logback:7.6.0"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.boot:spring-boot-starter-actuator"))
+                configuration.dependencies.add(project.dependencies.create("org.springframework.cloud:spring-cloud-starter-alibaba-sentinel"))
+                configuration.dependencies.add(project.dependencies.create("cn.tuhu:tuhu-springframework-xxl-job-starter"))
+            
+            }
+        }
+    }
 }
+
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Greenwich.RELEASE'
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Greenwich.SR2'
     }
     dependencies{
-        dependency 'cn.tuhu:tuhu-passcloud-context:1.0.0.RELEASE'
-        dependency 'cn.tuhu:tuhu-passcloud-context:1.0.0.RELEASE'
-        
-        dependency 'io.springfox:springfox-swagger2:2.7.0'
-        dependency 'io.springfox:springfox-swagger-ui:2.7.0'
-        dependency 'org.aspectj:aspectjtools:1.9.4'
-        dependency 'org.projectlombok:lombok:1.18.8'   
-        dependency 'org.aspectj:aspectjtools:1.9.4'
-        dependency 'org.projectlombok:lombok:1.18.8'
-        dependency 'commons-lang:commons-lang:2.6'
-        dependency 'commons-fileupload:commons-fileupload:1.3.1'
-        dependency 'commons-io:commons-io:2.5'
-        dependency 'commons-codec:commons-codec:1.10'
-        dependency 'com.alibaba:fastjson:1.2.45'
-        dependency 'org.apache.commons:commons-jexl:2.1.1'
-        dependency 'net.sf.json-lib:json-lib:2.4:jdk15'
-        dependency 'dom4j:dom4j:1.6.1'
-        dependency 'com.google.code.gson:gson:2.8.5'
+        dependency dependencyManagement.mssqljdbc
+        dependency dependencyManagement.hutoolcore
+        dependency dependencyManagement.apolloclient
+        dependency dependencyManagement.guava
+        dependency dependencyManagement.fastjson
+        dependency dependencyManagement.jacksondatatypejsr310
+        dependency dependencyManagement.jacksondataformatyaml
+        dependency dependencyManagement.springfoxswagger2
+        dependency dependencyManagement.springfoxswaggerui
+        dependency dependencyManagement.aspectjtools
+        dependency dependencyManagement.lombok
+        dependency dependencyManagement.aspectjtools
+        dependency dependencyManagement.commonslang
+        dependency dependencyManagement.commonsfileupload
+        dependency dependencyManagement.commonsio
+        dependency dependencyManagement.commonscodec
+        dependency dependencyManagement.commonsjexl
+        dependency dependencyManagement.commonsbeanutils
+        dependency dependencyManagement.commonsbeanutils
+        dependency dependencyManagement.freemarker
+        dependency dependencyManagement.dom4j
+        dependency dependencyManagement.gson
+        dependency dependencyManagement.commonslang3
+        dependency dependencyManagement.commonscollections4
+        dependency dependencyManagement.querydsljpa
+        dependency dependencyManagement.querydslapt
+        dependency dependencyManagement.redisson
+        dependency dependencyManagement.alibabasentinel
+        dependency dependencyManagement.alibabanacosdiscovery
+        dependency dependencyManagement.tuhuspringframeworkcore
+        dependency dependencyManagement.tuhuspringframeworkcontext
+        dependency dependencyManagement.tuhuspringframeworkweb
+        dependency dependencyManagement.tuhuspringframeworkjpa
+        dependency dependencyManagement.tuhuspringframeworkdatajpa
+        dependency dependencyManagement.tuhuspringframeworkcache
+        dependency dependencyManagement.tuhuspringframeworkwebmvc
+        dependency dependencyManagement.tuhuspringframeworkxxljobstarter
+        dependency dependencyManagement.tuhuspringframeworkmybatis
     }
 }
